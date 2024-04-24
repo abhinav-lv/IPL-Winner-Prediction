@@ -35,34 +35,14 @@ function App() {
   const [result, setResult] = useState<IResult>();
 
   // Error states
-  const [battingError, setBattingError] = useState({
-    message: "",
-    status: false,
-  });
-  const [bowlingError, setBowlingError] = useState({
-    message: "",
-    status: false,
-  });
-  const [cityError, setCityError] = useState({
-    message: "",
-    status: false,
-  });
-  const [targetError, setTargetError] = useState({
-    message: "",
-    status: false,
-  });
-  const [scoreError, setScoreError] = useState({
-    message: "",
-    status: false,
-  });
-  const [oversError, setOversError] = useState({
-    message: "",
-    status: false,
-  });
-  const [wicketsError, setWicketsError] = useState({
-    message: "",
-    status: false,
-  });
+  const defErrorObj = { message: "", status: false };
+  const [battingError, setBattingError] = useState(defErrorObj);
+  const [bowlingError, setBowlingError] = useState(defErrorObj);
+  const [cityError, setCityError] = useState(defErrorObj);
+  const [targetError, setTargetError] = useState(defErrorObj);
+  const [scoreError, setScoreError] = useState(defErrorObj);
+  const [oversError, setOversError] = useState(defErrorObj);
+  const [wicketsError, setWicketsError] = useState(defErrorObj);
 
   // Initial data
   const [teamsAndCities, setTeamsAndCities] = useState<ITeamsAndCities>({
@@ -304,6 +284,7 @@ function App() {
               </FormControl>
             </Box>
           </Flex>
+          {/* Submit */}
           <Flex justifyContent="center">
             <Button
               colorScheme="blue"
