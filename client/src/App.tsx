@@ -12,13 +12,26 @@ import {
   NumberInputField,
   Select,
   Skeleton,
+  Image,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
+// import team images
+import csk from "./assets/csk.png";
+import dc from "./assets/dc.png";
+import mi from "./assets/mi.png";
+import kkr from "./assets/kkr.png";
+import rcb from "./assets/rcb.png";
+import kxip from "./assets/kxip.png";
+import rr from "./assets/rr.png";
+import lsg from "./assets/lsg.png";
+import gt from "./assets/gt.png";
+import srh from "./assets/srh.png";
+
 // Types for data
 interface ITeamsAndCities {
-  teams: String[];
-  cities: String[];
+  teams: string[];
+  cities: string[];
 }
 interface IResult {
   probabilities: {
@@ -26,6 +39,18 @@ interface IResult {
     bowlingTeam: Number;
   };
 }
+const teamToImages: { [key: string]: string } = {
+  "Royal Challengers Bangalore": rcb,
+  "Kolkata Knight Riders": kkr,
+  "Delhi Capitals": dc,
+  "Sunrisers Hyderabad": srh,
+  "Mumbai Indians": mi,
+  "Kings XI Punjab": kxip,
+  "Gujarat Titans": gt,
+  "Rajasthan Royals": rr,
+  "Chennai Super Kings": csk,
+  "Lucknow Supergiants": lsg,
+};
 
 // Get the teams and cities from the server to display as options
 const getData = async (setTeamsAndCities: Function, setIsLoading: Function) => {
@@ -96,50 +121,46 @@ function App() {
   const handleSubmit = async () => {
     if (battingTeam.length === 0) {
       setBattingError({ status: true, message: "Batting team is required" });
+      return;
     } else {
       setBattingError({ status: false, message: "" });
     }
     if (bowlingTeam.length === 0) {
       setBowlingError({ status: true, message: "Bowling team is required" });
+      return;
     } else {
       setBowlingError({ status: false, message: "" });
     }
     if (city.length === 0) {
       setCityError({ status: true, message: "City is required" });
+      return;
     } else {
       setCityError({ status: false, message: "" });
     }
     if (target <= 0 || target > 720) {
       setTargetError({ status: true, message: "Invalid value for target" });
+      return;
     } else {
       setTargetError({ status: false, message: "" });
     }
     if (score <= 0 || score >= target) {
       setScoreError({ status: true, message: "Invalid value for score" });
+      return;
     } else {
       setScoreError({ status: false, message: "" });
     }
     if (overs <= 0 || overs >= 20) {
       setOversError({ status: true, message: "Invalid value for overs" });
+      return;
     } else {
       setOversError({ status: false, message: "" });
     }
     if (wickets < 0 || wickets >= 10) {
       setWicketsError({ status: true, message: "Invalid value for wickets" });
+      return;
     } else {
       setWicketsError({ status: false, message: "" });
     }
-
-    if (
-      battingError.status ||
-      bowlingError.status ||
-      cityError.status ||
-      targetError.status ||
-      scoreError.status ||
-      wicketsError.status ||
-      oversError.status
-    )
-      return;
 
     // send to server
     setSubmitLoading(true);
@@ -315,6 +336,22 @@ function App() {
         <Flex flexDirection="column" p="2rem">
           <Text>{`Proababilty that ${battingTeam} will win: ${result.probabilities.battingTeam}`}</Text>
           <Text>{`Proababilty that ${bowlingTeam} will win: ${result.probabilities.bowlingTeam}`}</Text>
+          <Flex justifyContent="space-evenly">
+            <Image
+              bg="whitesmoke"
+              p="1.5rem"
+              borderRadius="32px"
+              h="12rem"
+              src={teamToImages[battingTeam]}
+            />
+            <Image
+              bg="whitesmoke"
+              p="1.5rem"
+              borderRadius="32px"
+              h="12rem"
+              src={teamToImages[bowlingTeam]}
+            />
+          </Flex>
         </Flex>
       )}
     </Flex>
