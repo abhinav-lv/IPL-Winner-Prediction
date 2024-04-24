@@ -1,4 +1,4 @@
-// Import hooks and components
+// Import dependencies
 import {
   Box,
   Button,
@@ -13,53 +13,11 @@ import {
   Select,
   Skeleton,
   Image,
+  Progress,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-
-// import team images
-import csk from "./assets/csk.png";
-import dc from "./assets/dc.png";
-import mi from "./assets/mi.png";
-import kkr from "./assets/kkr.png";
-import rcb from "./assets/rcb.png";
-import kxip from "./assets/kxip.png";
-import rr from "./assets/rr.png";
-import lsg from "./assets/lsg.png";
-import gt from "./assets/gt.png";
-import srh from "./assets/srh.png";
-
-// Types for data
-interface ITeamsAndCities {
-  teams: string[];
-  cities: string[];
-}
-interface IResult {
-  probabilities: {
-    battingTeam: Number;
-    bowlingTeam: Number;
-  };
-}
-const teamToImages: { [key: string]: string } = {
-  "Royal Challengers Bangalore": rcb,
-  "Kolkata Knight Riders": kkr,
-  "Delhi Capitals": dc,
-  "Sunrisers Hyderabad": srh,
-  "Mumbai Indians": mi,
-  "Kings XI Punjab": kxip,
-  "Gujarat Titans": gt,
-  "Rajasthan Royals": rr,
-  "Chennai Super Kings": csk,
-  "Lucknow Supergiants": lsg,
-};
-
-// Get the teams and cities from the server to display as options
-const getData = async (setTeamsAndCities: Function, setIsLoading: Function) => {
-  const res: ITeamsAndCities = await (
-    await fetch("/api/getTeamsAndCities")
-  ).json();
-  setTeamsAndCities(res);
-  setIsLoading(false);
-};
+import { IResult, ITeamsAndCities } from "./lib/types";
+import { getTeamsAndCities, teamToCities, teamToImages } from "./lib/utilities";
 
 function App() {
   // Loading states
@@ -114,8 +72,13 @@ function App() {
 
   // To get data when the component loads
   useEffect(() => {
-    getData(setTeamsAndCities, setIsLoading);
+    getTeamsAndCities(setTeamsAndCities, setIsLoading);
   }, []);
+
+  const handleInputChange = (mutate: Function) => {
+    setResult(undefined);
+    mutate();
+  };
 
   // Check the input and send to server
   const handleSubmit = async () => {
@@ -191,7 +154,7 @@ function App() {
     <Flex flexDir="column">
       {/* Header */}
       <Flex p="1rem" bg="thistle">
-        <Heading>Foundation of Data Science</Heading>
+        <Heading>IPL Win Prediction</Heading>
       </Flex>
 
       {/* Loader */}
@@ -214,7 +177,12 @@ function App() {
                 <Select
                   placeholder="Select team"
                   value={battingTeam}
-                  onChange={(e) => setBattingTeam(e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(() => {
+                      setBattingTeam(e.target.value);
+                      setCity("");
+                    })
+                  }
                 >
                   {teamsAndCities.teams
                     .filter((team) =>
@@ -234,7 +202,12 @@ function App() {
                 <Select
                   placeholder="Select team"
                   value={bowlingTeam}
-                  onChange={(e) => setBowlingTeam(e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(() => {
+                      setBowlingTeam(e.target.value);
+                      setCity("");
+                    })
+                  }
                 >
                   {teamsAndCities.teams
                     .filter((team) =>
@@ -254,11 +227,20 @@ function App() {
                 <Select
                   placeholder="Select city"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(() => setCity(e.target.value))
+                  }
                 >
-                  {teamsAndCities.cities.map((city, idx) => (
-                    <option key={idx}>{city}</option>
-                  ))}
+                  {teamsAndCities.cities
+                    .filter((city) =>
+                      battingTeam.length > 0 && bowlingTeam.length > 0
+                        ? city === teamToCities[battingTeam] ||
+                          city === teamToCities[bowlingTeam]
+                        : true
+                    )
+                    .map((city, idx) => (
+                      <option key={idx}>{city}</option>
+                    ))}
                 </Select>
                 <FormErrorMessage>{cityError.message}</FormErrorMessage>
               </FormControl>
@@ -271,7 +253,9 @@ function App() {
                 <FormLabel>Target</FormLabel>
                 <NumberInput
                   value={target}
-                  onChange={(e) => setTarget(Number(e))}
+                  onChange={(e) =>
+                    handleInputChange(() => setTarget(Number(e)))
+                  }
                 >
                   <NumberInputField />
                 </NumberInput>
@@ -284,7 +268,7 @@ function App() {
                 <FormLabel>Score</FormLabel>
                 <NumberInput
                   value={score}
-                  onChange={(e) => setScore(Number(e))}
+                  onChange={(e) => handleInputChange(() => setScore(Number(e)))}
                 >
                   <NumberInputField />
                 </NumberInput>
@@ -297,7 +281,7 @@ function App() {
                 <FormLabel>Overs</FormLabel>
                 <NumberInput
                   value={overs}
-                  onChange={(e) => setOvers(Number(e))}
+                  onChange={(e) => handleInputChange(() => setOvers(Number(e)))}
                 >
                   <NumberInputField />
                 </NumberInput>
@@ -310,7 +294,9 @@ function App() {
                 <FormLabel>Wickets</FormLabel>
                 <NumberInput
                   value={wickets}
-                  onChange={(e) => setWickets(Number(e))}
+                  onChange={(e) =>
+                    handleInputChange(() => setWickets(Number(e)))
+                  }
                 >
                   <NumberInputField />
                 </NumberInput>
@@ -333,9 +319,17 @@ function App() {
       {result === undefined ? (
         <></>
       ) : (
-        <Flex flexDirection="column" p="2rem">
-          <Text>{`Proababilty that ${battingTeam} will win: ${result.probabilities.battingTeam}`}</Text>
-          <Text>{`Proababilty that ${bowlingTeam} will win: ${result.probabilities.bowlingTeam}`}</Text>
+        <Flex flexDirection="column" p="2rem" w="60%" margin="auto" gap="2rem">
+          <Text
+            fontWeight="bold"
+            fontStyle="italic"
+            textAlign="center"
+            fontSize="1.5rem"
+            color="steelblue"
+          >{`Probabilty that ${battingTeam} will win: ${(
+            result.probabilities.battingTeam * 100
+          ).toFixed(2)} %`}</Text>
+          <Progress value={result.probabilities.battingTeam * 100} />
           <Flex justifyContent="space-evenly">
             <Image
               bg="whitesmoke"

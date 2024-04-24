@@ -13,13 +13,8 @@ teams = ['Royal Challengers Bangalore', 'Kolkata Knight Riders',
        'Chennai Super Kings', 'Lucknow Supergiants']
 
 # List of cities
-cities = ['Hyderabad', 'Rajkot', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata',
-       'Delhi', 'Chandigarh', 'Kanpur', 'Jaipur', 'Chennai', 'Cape Town',
-       'Port Elizabeth', 'Durban', 'Centurion', 'East London',
-       'Johannesburg', 'Kimberley', 'Bloemfontein', 'Ahmedabad',
-       'Cuttack', 'Nagpur', 'Dharamsala', 'Visakhapatnam', 'Pune',
-       'Raipur', 'Ranchi', 'Abu Dhabi', 'Sharjah', 'Mohali',
-       'Bengaluru']
+cities = ['Hyderabad', 'Bangalore', 'Mumbai', 'Kolkata', 'Delhi', 
+          'Jaipur', 'Chennai', 'Ahmedabad','Dharamsala', 'Kanpur']
 
 # Load the model
 pipe = pickle.load(open('model/pipe.pkl','rb'))
