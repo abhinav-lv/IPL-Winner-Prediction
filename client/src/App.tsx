@@ -98,7 +98,7 @@ function App() {
     } else {
       setOversError({ status: false, message: "" });
     }
-    if (wickets < 0 || wickets >= 10) {
+    if (wickets <= 0 || wickets > 10) {
       setWicketsError({ status: true, message: "Invalid value for wickets" });
       return;
     } else {
@@ -133,8 +133,8 @@ function App() {
   return (
     <Flex flexDir="column">
       {/* Header */}
-      <Flex p="1rem" bg="thistle">
-        <Heading>IPL Win Prediction</Heading>
+      <Flex p="1rem" bg="steelblue">
+        <Heading color="white">IPL Win Prediction</Heading>
       </Flex>
 
       {/* Loader */}
@@ -271,7 +271,7 @@ function App() {
             {/* Wickets input */}
             <Box w="100%">
               <FormControl isInvalid={wicketsError.status}>
-                <FormLabel>Wickets</FormLabel>
+                <FormLabel>Wickets Left</FormLabel>
                 <NumberInput
                   value={wickets}
                   onChange={(e) =>
