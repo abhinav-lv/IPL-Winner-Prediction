@@ -16,6 +16,7 @@ import {
   Progress,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import CricketIcon from "./assets/cricket.png";
 import { IResult, ITeamsAndCities } from "./lib/types";
 import { getTeamsAndCities, teamToCities, teamToImages } from "./lib/utilities";
 
@@ -133,8 +134,9 @@ function App() {
   return (
     <Flex flexDir="column">
       {/* Header */}
-      <Flex p="1rem" bg="steelblue">
+      <Flex p="1rem" bg="steelblue" gap="1rem" alignItems="center">
         <Heading color="white">IPL Win Prediction</Heading>
+        <Image src={CricketIcon} h="90%" />
       </Flex>
 
       {/* Loader */}
