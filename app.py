@@ -54,4 +54,4 @@ def api():
             'battingTeam': win,
             'bowlingTeam': loss
         }})
-    return jsonify({'data': 'API bitch'})
+    return jsonify({'data': 'Invalid request method'})
